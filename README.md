@@ -7,7 +7,7 @@ This project explores whether roadway, environmental, time-related, and historic
 The project is designed as a **proof-of-concept decision-support workflow** for transportation safety planners, traffic engineers, and road-safety analysts. Its purpose is to help prioritize cases for additional safety or engineering review, not to replace professional judgment or prescribe roadway interventions.
 
 **Course:** MSBA 265 – Special Analytics Topics  
-**Project Stage:** Final Project – Part 1 (P1)
+**Project Stage:** Final Project – Part 1
 
 ---
 
