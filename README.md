@@ -216,18 +216,6 @@ road-accident-risk-prediction/
 └── requirements.txt
 ```
 
-The local virtual environment folder should not be committed to the repository.
-
-Recommended `.gitignore` entries:
-
-```text
-venv/
-.venv/
-__pycache__/
-*.pyc
-.DS_Store
-```
-
 ---
 
 ## Environment Setup
@@ -235,11 +223,9 @@ __pycache__/
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/hngo13-cell/road-accident-risk-prediction
 cd road-accident-risk-prediction
 ```
-
-Replace `<repository-url>` with the actual GitHub repository URL.
 
 ---
 
@@ -282,7 +268,15 @@ From the repository root:
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
+## Tested Environment
 
+This project was tested with:
+
+- Python 3.13.14
+- NumPy 2.5.4
+- pandas 3.0.6
+- Matplotlib 3.11.2
+- scikit-learn 1.9.1
 ---
 
 ## Running the EDA Notebook
