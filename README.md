@@ -101,6 +101,8 @@ After activation, the terminal should show the virtual environment name, for exa
 (venv)
 ```
 
+> **Important:** Make sure the `venv` environment is activated before installing dependencies or running any notebook.
+
 ---
 
 ## 3. Upgrade pip
@@ -129,9 +131,37 @@ pip install -r requirements.txt
 
 ---
 
+## VS Code Environment Setup
+
+If you open the notebooks in VS Code, make sure they use the project's virtual environment.
+
+In the top-right corner of the notebook, select:
+
+```text
+Select Kernel
+→ Python Environments
+→ venv
+```
+
+The selected Python environment should point to the `venv` folder inside this project.
+
+You can also verify the active Python environment from the terminal:
+
+```bash
+python -c "import sys; print(sys.executable)"
+```
+
+The returned path should include:
+
+```text
+road-accident-risk-prediction\venv\
+```
+
+---
+
 # Reproducing the Full Analysis
 
-To reproduce the analytical workflow from the beginning, run the project notebooks in the following order:
+Run the notebooks in the following order:
 
 ```text
 1. notebooks/01_eda.ipynb
@@ -139,16 +169,18 @@ To reproduce the analytical workflow from the beginning, run the project noteboo
 3. notebooks/03_final_model.ipynb
 ```
 
-The notebooks should be run in this order because later stages build on the analysis and modeling decisions made earlier in the workflow.
+The notebooks should be executed in this order because later stages build on the analysis and modeling decisions made earlier in the workflow.
+
+> Before running the commands below, confirm that `(venv)` appears in the terminal.
 
 ---
 
 ## 5. Run `01_eda.ipynb`
 
-Open:
+From the project root, run:
 
-```text
-notebooks/01_eda.ipynb
+```bash
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
 ```
 
 This notebook explores and summarizes the road-accident dataset.
@@ -162,21 +194,17 @@ reports/figures/
 reports/tables/
 ```
 
-In VS Code, make sure the notebook is using the project's `venv` Python environment as its kernel.
-
-Then run all cells from top to bottom.
+Wait until the command finishes and the terminal prompt returns before continuing.
 
 ---
 
 ## 6. Run `02_model_development.ipynb`
 
-Next, open:
+After the EDA notebook finishes successfully, run:
 
-```text
-notebooks/02_model_development.ipynb
+```bash
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_model_development.ipynb
 ```
-
-Run all cells from top to bottom.
 
 This notebook develops and evaluates the regression and classification models and evaluates classification probability thresholds.
 
@@ -185,7 +213,7 @@ The project uses:
 - **Multiple Linear Regression** for continuous `accident_risk` estimation
 - **Logistic Regression** for high-risk classification
 
-The notebook also evaluates model performance and produces supporting figures and tables in:
+The notebook also produces supporting figures and tables in:
 
 ```text
 reports/figures/
@@ -196,13 +224,11 @@ reports/tables/
 
 ## 7. Run `03_final_model.ipynb`
 
-Finally, open:
+After model development is complete, run:
 
-```text
-notebooks/03_final_model.ipynb
+```bash
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
 ```
-
-Run all cells from top to bottom.
 
 This notebook implements the selected final workflow and saves the reusable model artifacts used by the Streamlit application.
 
@@ -219,6 +245,20 @@ regression_pipeline.joblib
 classification_pipeline.joblib
 classification_metadata.joblib
 ```
+
+---
+
+## Run All Notebooks
+
+Alternatively, after activating the `venv`, the three notebooks can be executed sequentially with:
+
+```bash
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_model_development.ipynb
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
+```
+
+Each command should complete successfully before the next notebook is executed.
 
 ---
 
@@ -248,7 +288,7 @@ The Streamlit application loads these saved artifacts directly.
 
 # Running the Application
 
-After the required dependencies are installed and the model artifacts are available in `artifacts/`, start the Streamlit application from the project root:
+After the dependencies are installed and the model artifacts are available in `artifacts/`, start the Streamlit application from the project root:
 
 ```bash
 streamlit run app/app.py
@@ -260,9 +300,7 @@ Alternatively:
 python -m streamlit run app/app.py
 ```
 
-The application will open in your browser.
-
-It provides two modes:
+The application provides two modes:
 
 - **Single Observation** – enter one road-condition profile and generate risk predictions.
 - **Batch CSV Prioritization** – upload multiple observations and rank them by predicted high-risk probability.
@@ -273,32 +311,28 @@ It provides two modes:
 
 ## Single Observation
 
-Enter the road, environmental, temporal, and historical characteristics of one observation, then click:
-
-```text
-Analyze Risk
-```
+Enter the road, environmental, temporal, and historical characteristics of one observation and click **Analyze Risk**.
 
 The application returns:
 
-- **Estimated Accident Risk** – continuous prediction from the regression model.
-- **High-Risk Probability** – probability generated by the Logistic Regression model.
-- **High-Risk Flag** – whether the probability meets the selected `0.40` classification threshold.
-- **Review Priority** – illustrative `LOW`, `MEDIUM`, or `HIGH` review category.
+- **Estimated Accident Risk**
+- **High-Risk Probability**
+- **High-Risk Flag**
+- **Review Priority**
 
-The `0.75` cutoff used for the **HIGH** review-priority category is an illustrative business rule rather than a transportation-engineering threshold.
+The high-risk classification threshold is `0.40`. The `0.75` cutoff for the **HIGH** review-priority category is an illustrative business rule rather than a transportation-engineering threshold.
 
 ---
 
 ## Batch CSV Prioritization
 
-Use the included sample file to test the batch workflow:
+A sample upload file is available at:
 
 ```text
 data/batch_test_sample.csv
 ```
 
-The uploaded CSV should contain these model features:
+The uploaded CSV should contain:
 
 ```text
 road_type
@@ -327,15 +361,7 @@ high_risk_flag
 review_priority
 ```
 
-The highest-risk observations appear first in the prioritized results.
-
-You can download the complete scored dataset using:
-
-```text
-Download Prioritized Results
-```
-
-The downloaded file is:
+The complete prioritized results can be downloaded as:
 
 ```text
 road_safety_prioritized_results.csv
@@ -371,6 +397,46 @@ The regression estimate can provide additional risk context, while the classific
 
 # Troubleshooting
 
+### Notebook uses the wrong Python environment
+
+Make sure the virtual environment is activated:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+Then verify:
+
+```bash
+python -c "import sys; print(sys.executable)"
+```
+
+If running the notebook interactively in VS Code, select:
+
+```text
+Select Kernel
+→ Python Environments
+→ venv
+```
+
+---
+
+### `jupyter` is not recognized
+
+Make sure the virtual environment is activated and the dependencies are installed:
+
+```bash
+pip install -r requirements.txt
+```
+
+Then use:
+
+```bash
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
+```
+
+---
+
 ### `streamlit` is not recognized
 
 Make sure the virtual environment is activated and dependencies are installed:
@@ -382,8 +448,10 @@ pip install -r requirements.txt
 Then run:
 
 ```bash
-streamlit run app/app.py
+python -m streamlit run app/app.py
 ```
+
+---
 
 ### PowerShell blocks virtual environment activation
 
@@ -399,20 +467,24 @@ Then:
 .\venv\Scripts\Activate.ps1
 ```
 
+---
+
 ### Batch CSV cannot be scored
 
 Check that:
 
 - All required columns are present.
 - Required fields do not contain missing values.
-- Categorical values match the accepted values exactly.
+- Categorical values match the accepted values.
 - Boolean columns use `0`, `1`, `True`, or `False`.
 
-You can compare your file with:
+You can compare the input file with:
 
 ```text
 data/batch_test_sample.csv
 ```
+
+---
 
 ### Model artifact error
 
@@ -424,15 +496,11 @@ artifacts/classification_pipeline.joblib
 artifacts/classification_metadata.joblib
 ```
 
-The Streamlit application requires these saved artifacts.
+If they are missing, rerun:
 
-If they are missing, run:
-
-```text
-notebooks/03_final_model.ipynb
+```bash
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
 ```
-
-to regenerate them.
 
 ---
 
