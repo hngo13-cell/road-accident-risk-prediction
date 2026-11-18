@@ -1,0 +1,3 @@
+Model,Primary Purpose,Key Validation Result,Additional Result
+Multiple Linear Regression,Estimate continuous accident risk,R² = 0.8042,RMSE = 0.0735
+Logistic Regression,Identify high-risk observations,Recall = 0.7483,F1 = 0.7826
