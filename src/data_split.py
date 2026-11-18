@@ -34,7 +34,7 @@ def load_and_split_data():
     train_df = pd.read_csv(TRAIN_PATH)
 
     # Separate predictors and target
-    X = train_df.drop(columns=[TARGET])
+    X = train_df.drop(columns=["id", TARGET])
     y = train_df[TARGET]
 
     # Create an 80/20 train-validation split

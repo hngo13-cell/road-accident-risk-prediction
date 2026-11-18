@@ -2,38 +2,24 @@
 
 ## Project Overview
 
-This project explores whether roadway, environmental, time-related, and historical accident characteristics can be used to estimate accident risk and identify higher-risk road-condition profiles for transportation safety prioritization.
+This project develops a proof-of-concept road-safety screening and prioritization workflow using synthetic road accident data.
 
-The project is designed as a **proof-of-concept decision-support workflow** for transportation safety planners, traffic engineers, and road-safety analysts. Its purpose is to help prioritize cases for additional safety or engineering review, not to replace professional judgment or prescribe roadway interventions.
+The goal is to estimate accident risk from roadway, environmental, temporal, and historical characteristics and identify observations that may deserve higher priority for additional transportation-safety review.
 
-**Course:** MSBA 265 – Special Analytics Topics  
-**Project Stage:** Final Project – Part 1
+The project includes:
 
----
+- Exploratory Data Analysis
+- Multiple Linear Regression for continuous accident-risk estimation
+- Logistic Regression for high-risk classification
+- Model evaluation and visualization
+- Saved reusable model artifacts
+- An interactive Streamlit safety-prioritization application
 
-## Business Problem
-
-Transportation agencies must make safety decisions across many roadway conditions while working with limited staff, time, and funding.
-
-A practical risk-screening workflow could help agencies identify road-condition profiles that appear more risky and therefore deserve closer review before resources are committed.
-
-### Intended Stakeholders
-
-- Transportation safety planners
-- Traffic engineers
-- Road-safety analysts
-- City or state transportation agencies
-- Road-safety consulting organizations
-
-### Decision Supported
-
-**Which road-condition observations should receive higher priority for additional safety or engineering review?**
-
-The project is intended to support screening and prioritization. It does not replace professional engineering judgment, field investigation, or formal roadway-safety analysis.
+The models are intended to support screening and prioritization rather than automate transportation-engineering decisions.
 
 ---
 
-## Project Question
+## Research Question
 
 > Can road, environmental, time-related, and historical characteristics be used to estimate accident risk and identify high-risk road conditions for transportation safety prioritization?
 
@@ -41,22 +27,11 @@ The project is intended to support screening and prioritization. It does not rep
 
 ## Dataset
 
-The project uses Kaggle's **Predicting Road Accident Risk** dataset from the 2025 Playground Series.
+The project uses the Kaggle **Predicting Road Accident Risk** dataset from Playground Series S5E10.
 
-### Dataset Summary
+The training dataset contains 517,754 observations and the target variable `accident_risk`.
 
-| Item | Value |
-|---|---:|
-| Training set | 517,754 rows × 14 columns |
-| Kaggle test set | 172,585 rows × 13 columns |
-| Target | `accident_risk` |
-| Target type | Continuous numeric value from 0 to 1 |
-| Missing values | None identified |
-| Duplicate rows | None identified |
-
-Each row represents one synthetic road-condition observation containing roadway, environmental, temporal, and historical accident characteristics.
-
-### Key Predictors
+The models use 12 predictors:
 
 - `road_type`
 - `num_lanes`
@@ -71,145 +46,38 @@ Each row represents one synthetic road-condition observation containing roadway,
 - `school_season`
 - `num_reported_accidents`
 
-The `id` field is treated as an observation identifier and is excluded from model predictors.
-
-### Dataset Source
-
-Kaggle – Predicting Road Accident Risk  
-https://www.kaggle.com/competitions/playground-series-s5e10
+The `id` column is excluded from modeling.
 
 ---
 
-## Planned Modeling Approach
-
-The project uses two complementary supervised-learning models.
-
-### 1. Multiple Linear Regression
-
-Purpose:
-
-- Estimate the continuous `accident_risk` score.
-- Provide an interpretable regression model for understanding how predictors are associated with estimated accident risk.
-
-Baseline:
-
-- Training-set mean accident risk.
-
-Evaluation metrics:
-
-- RMSE
-- MAE
-- R²
-
-### 2. Logistic Regression
-
-Purpose:
-
-- Identify whether an observation belongs to a higher-risk group.
-- Provide a classification-oriented output that can support screening and prioritization.
-
-The proposed high-risk cutoff is the **75th percentile of `accident_risk` calculated from the training data only**.
-
-Baseline:
-
-- Majority-class prediction.
-
-Evaluation metrics:
-
-- Accuracy
-- Precision
-- Recall
-- F1 score
-- Confusion matrix
-
-Recall will receive particular attention because a false negative represents a high-risk observation that the screening process failed to flag.
-
----
-
-## Initial Exploratory Data Analysis
-
-Initial EDA has been completed in:
-
-```text
-notebooks/01_eda.ipynb
-```
-
-### Data Quality Findings
-
-- No missing values were identified.
-- No duplicate rows were identified.
-- Training and Kaggle test datasets contain compatible predictor columns.
-- Training and test datasets contain compatible category values.
-- The `id` column is excluded from modeling.
-- An approximately 80/20 training-validation split was created for model development.
-
-### Numeric Relationships
-
-| Predictor | Correlation with `accident_risk` |
-|---|---:|
-| `curvature` | ≈ 0.544 |
-| `speed_limit` | ≈ 0.431 |
-| `num_reported_accidents` | ≈ 0.214 |
-| `num_lanes` | ≈ -0.006 |
-
-`curvature` shows the strongest positive linear relationship with accident risk among the numeric predictors examined, followed by `speed_limit`.
-
-### Categorical Findings
-
-- Nighttime observations have the highest average accident risk among lighting categories.
-- Foggy conditions have the highest average accident risk among weather categories.
-- Clear weather has the lowest average risk among the weather groups examined.
-- These exploratory relationships do not establish causation.
-
----
-
-## Proposed Decision-Support Workflow
-
-```text
-Road & Environmental Conditions
-              ↓
-        Preprocessing
-              ↓
-Multiple Linear Regression + Logistic Regression
-              ↓
-Risk Estimate + High-Risk Flag / Probability
-              ↓
-Safety Review Prioritization
-              ↓
-Transportation Planner / Engineer
-              ↓
-Further Investigation
-```
-
-If model performance is adequate, the final project will translate model outputs into a simple **Road Accident Risk Screening Tool**.
-
-Potential outputs include:
-
-- Estimated accident risk
-- High-risk probability
-- Priority level
-- Suggested action such as additional transportation-safety review
-
----
-
-## Repository Structure
+## Project Structure
 
 ```text
 road-accident-risk-prediction/
 │
+├── app/
+│   └── app.py
+│
+├── artifacts/
+│   ├── classification_metadata.joblib
+│   ├── classification_pipeline.joblib
+│   └── regression_pipeline.joblib
+│
 ├── data/
-│   ├── train.csv
+│   ├── batch_test_sample.csv
+│   ├── sample_submission.csv
 │   ├── test.csv
-│   └── sample_submission.csv
+│   └── train.csv
 │
 ├── docs/
-│   └── p1.pdf
+│   └── P1.pdf
 │
 ├── notebooks/
-│   └── 01_eda.ipynb
+│   ├── 01_eda.ipynb
+│   └── 02_modeling.ipynb
 │
 ├── src/
-│   └── 01_data_split.py
+│   └── data_split.py
 │
 ├── .gitignore
 ├── README.md
@@ -218,219 +86,474 @@ road-accident-risk-prediction/
 
 ---
 
-## Environment Setup
+## Modeling Approach
 
-### 1. Clone the Repository
+The project uses two complementary models.
 
-```bash
-git clone https://github.com/hngo13-cell/road-accident-risk-prediction
-cd road-accident-risk-prediction
-```
+### Multiple Linear Regression
 
----
+Used to estimate continuous `accident_risk`.
 
-### 2. Create a Virtual Environment
-
-#### Windows PowerShell
-
-```powershell
-python -m venv venv
-```
-
-Activate it:
-
-```powershell
-.\venv\Scripts\Activate.ps1
-```
-
-If PowerShell blocks activation, run:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-```
-
-Then activate the environment again.
-
-#### macOS / Linux
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
----
-
-### 3. Install Dependencies
-
-From the repository root:
-
-```bash
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
-## Tested Environment
-
-This project was tested with:
-
-- Python 3.13.14
-- NumPy 2.5.4
-- pandas 3.0.6
-- Matplotlib 3.11.2
-- scikit-learn 1.9.1
----
-
-## Running the EDA Notebook
-
-The exploratory data analysis notebook is located at:
+Validation results:
 
 ```text
-notebooks/01_eda.ipynb
+RMSE = 0.0735
+MAE  = 0.0583
+R²   = 0.8042
 ```
 
-### Option 1: Run in VS Code
+### Logistic Regression
 
-1. Open the repository folder in VS Code.
-2. Make sure the **Python** and **Jupyter** extensions are installed.
-3. Open:
+A high-risk observation is defined using the 75th percentile of the training-set target:
 
 ```text
-notebooks/01_eda.ipynb
+accident_risk >= 0.46
 ```
 
-4. Click **Select Kernel** in the upper-right corner of the notebook.
-5. Select the Python interpreter from the project's `venv`.
-6. Choose **Run All** or run the notebook cells from top to bottom.
+Validation results:
 
-### Option 2: Launch Jupyter from the Terminal
-
-From the repository root:
-
-```bash
-python -m jupyter notebook notebooks/01_eda.ipynb
+```text
+Accuracy  = 0.8961
+Precision = 0.8202
+Recall    = 0.7483
+F1        = 0.7826
 ```
 
-Then run all cells from top to bottom.
-
-### Expected EDA Results
-
-A successful notebook run should reproduce:
-
-- Dataset shape and data-type summaries
-- Missing-value and duplicate checks
-- Target distribution
-- Numeric predictor correlations
-- Lighting and weather comparisons
-- Train/test compatibility checks
-- Preliminary preprocessing decisions
-- Training-validation split information
-
-The notebook should complete without errors.
+The regression model provides a continuous risk estimate, while the classification model provides a high-risk probability and flag for prioritization.
 
 ---
 
-## Running the Data Split Script
+## Saved Model Artifacts
 
-The data split script is located at:
+The fitted preprocessing and models are stored as reusable `joblib` artifacts:
 
 ```text
-src/01_data_split.py
+artifacts/
+├── regression_pipeline.joblib
+├── classification_pipeline.joblib
+└── classification_metadata.joblib
 ```
 
-From the repository root, run:
-
-```bash
-python src/01_data_split.py
-```
-
-The script prepares the training and validation data used for model development.
-
-The Kaggle test dataset is kept separate from model evaluation because its target values are not provided.
+Reload testing confirmed that the saved artifacts reproduce the original model outputs.
 
 ---
 
-## Current Project Status
+## Safety Prioritization Web Application
 
-### Completed
+The Streamlit application is located at:
 
-- Project framing and stakeholder definition
-- Real-world decision-support use case
-- Dataset audit
-- Missing-value checks
-- Duplicate checks
-- Initial exploratory data analysis
-- Numeric correlation analysis
-- Lighting and weather comparisons
-- Train/test compatibility checks
-- Training-validation split
-- Initial preprocessing decisions
-- P1 project report
+```text
+app/app.py
+```
 
-### Next Steps
+It provides two modes.
 
-1. Build the preprocessing pipeline.
-2. Establish the regression baseline.
-3. Train and evaluate Multiple Linear Regression.
-4. Create the high-risk classification target using training data only.
-5. Establish the classification baseline.
-6. Train and evaluate Logistic Regression.
-7. Compare regression and classification performance.
-8. Interpret model coefficients and error patterns.
-9. Save and reload fitted preprocessing/model artifacts.
-10. Develop the Road Accident Risk Screening Tool if model performance is adequate.
-11. Complete independent reproducibility testing.
+### Single Observation
+
+Users enter one road-condition observation and receive:
+
+- Estimated accident risk
+- High-risk probability
+- High-risk flag
+- Illustrative review priority
+
+### Batch CSV Prioritization
+
+Users can upload multiple road-condition observations.
+
+The application scores and ranks each row using predicted high-risk probability and generates:
+
+- `estimated_accident_risk`
+- `high_risk_probability`
+- `high_risk_flag`
+- `review_priority`
+- `priority_rank`
+
+The prioritized results can also be downloaded as a CSV file.
+
+The HIGH, MEDIUM, and LOW priority categories are illustrative decision-support rules and are not validated transportation-engineering thresholds.
 
 ---
 
 ## Limitations
 
-This project should be interpreted as a **proof of concept**.
+Key limitations include:
 
-- The Kaggle dataset is synthetic rather than data collected directly from a transportation agency.
-- The dataset does not include geographic coordinates or exact roadway locations.
-- The project cannot identify a specific real-world intersection or roadway segment.
-- Exploratory relationships do not imply causation.
-- Model predictions should support further investigation rather than replace professional engineering judgment.
-- A real-world deployment would require validation and retraining using local transportation-agency data.
+- The dataset is synthetic.
+- The data do not contain geographic coordinates or road-segment identifiers.
+- Model relationships should not be interpreted as causal.
+- Some actual high-risk observations remain unflagged.
+- The web application is a proof-of-concept screening tool rather than a production transportation-safety system.
 
 ---
 
-## P1 Report
+# Installation and Environment Setup
 
-The P1 submission is located at:
+## 1. Clone the Repository
 
-```text
-docs/p1.pdf
+```powershell
+git clone https://github.com/hngo13-cell/road-accident-risk-prediction.git
+cd road-accident-risk-prediction
 ```
 
-The report includes:
+---
 
-- Topic examples
-- Supervised machine learning infographic
-- Business problem and stakeholder
-- Project question and success measures
-- Dataset and planned modeling approach
-- Initial exploratory data analysis
-- Feasibility and next steps
-- Proposed Road Accident Risk Screening Tool
-- References
+## 2. Create a Virtual Environment
+
+### Windows PowerShell
+
+Create the virtual environment:
+
+```powershell
+python -m venv venv
+```
+
+If PowerShell prevents activation because script execution is disabled, allow scripts for the current PowerShell session:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+Activate the environment:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+After activation, the terminal should display:
+
+```text
+(venv)
+```
+
+at the beginning of the command prompt.
+
+`-Scope Process` applies the execution-policy change only to the current PowerShell session.
+
+### macOS / Linux
+
+Create the environment:
+
+```bash
+python3 -m venv venv
+```
+
+Activate it:
+
+```bash
+source venv/bin/activate
+```
 
 ---
 
-## References
+## 3. Install Dependencies
 
-Federal Highway Administration. *Data-Driven Safety Analysis (DDSA).*  
-https://highways.dot.gov/safety/data-analysis-tools/rsdp/data-driven-safety-analysis-ddsa
+```powershell
+pip install -r requirements.txt
+```
 
-Kaggle. *Predicting Road Accident Risk: Playground Series – Season 5, Episode 10.*  
-https://www.kaggle.com/competitions/playground-series-s5e10
+Core dependencies include:
 
-Chen, J., Meng, X., Chen, Z., Yuan, C., Zhao, Y., Zhang, J., et al. (2026). *Machine learning for traffic crash injury severity modelling: A systematic review integrating text mining analysis.* European Transport Research Review, 18, Article 96.  
-https://doi.org/10.1186/s12544-026-00856-8
+```text
+numpy
+pandas
+matplotlib
+scikit-learn
+joblib
+notebook
+streamlit
+```
 
 ---
 
-## Author
+# Running the Analysis
 
-**Anh Ngo**  
-University of the Pacific  
-MSBA 265 – Special Analytics Topics
+## Run the EDA Notebook
+
+```powershell
+jupyter notebook notebooks/01_eda.ipynb
+```
+
+## Run the Modeling Notebook
+
+```powershell
+jupyter notebook notebooks/02_modeling.ipynb
+```
+
+The modeling notebook performs the following major steps:
+
+1. Loads the train-validation split.
+2. Performs preprocessing.
+3. Builds a regression baseline.
+4. Fits Multiple Linear Regression.
+5. Creates the binary high-risk target.
+6. Builds a majority-class classification baseline.
+7. Fits Logistic Regression.
+8. Evaluates both models.
+9. Produces evaluation visualizations.
+10. Saves and reloads model artifacts.
+11. Documents the data-to-action workflow.
+12. Documents the Streamlit safety-prioritization application.
+
+---
+
+## Execute the Notebooks from the Command Line
+
+The EDA notebook can be executed automatically using:
+
+```powershell
+jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
+```
+
+The modeling notebook can be executed using:
+
+```powershell
+jupyter nbconvert --to notebook --execute --inplace notebooks/02_modeling.ipynb
+```
+
+This executes the notebook cells and saves the generated outputs back into the notebook.
+
+---
+
+# Running the Streamlit Application
+
+Make sure the virtual environment is activated.
+
+From the project root, run:
+
+```powershell
+streamlit run app/app.py
+```
+
+Streamlit will start a local server and display the application address in the terminal.
+
+The application can then be opened in a web browser.
+
+---
+
+# Batch Application Test
+
+A small sample file is included for testing the batch prioritization workflow:
+
+```text
+data/batch_test_sample.csv
+```
+
+Open the Streamlit application and select:
+
+```text
+Batch CSV Prioritization
+```
+
+Upload:
+
+```text
+data/batch_test_sample.csv
+```
+
+Expected behavior:
+
+- CSV validation passes.
+- 20 observations are scored.
+- Each observation receives:
+  - estimated accident risk
+  - high-risk probability
+  - high-risk flag
+  - review priority
+  - priority rank
+- Observations are ranked from highest to lowest predicted high-risk probability.
+- Prioritized results can be downloaded as a CSV file.
+
+---
+
+# Expected Batch CSV Schema
+
+A batch CSV must contain the following model features:
+
+```text
+road_type
+num_lanes
+curvature
+speed_limit
+lighting
+weather
+road_signs_present
+public_road
+time_of_day
+holiday
+school_season
+num_reported_accidents
+```
+
+Categorical values should use the same values used by the training dataset:
+
+```text
+road_type:
+highway, rural, urban
+
+lighting:
+daylight, dim, night
+
+weather:
+clear, foggy, rainy
+
+time_of_day:
+afternoon, evening, morning
+```
+
+Boolean variables should use `0/1` or `True/False`.
+
+Additional columns may be present in an uploaded CSV, but all required model features must be included.
+
+---
+
+# Model Artifacts and Reuse
+
+The fitted pipelines are saved in:
+
+```text
+artifacts/
+```
+
+The regression artifact can be loaded with:
+
+```python
+import joblib
+
+regression_model = joblib.load(
+    "artifacts/regression_pipeline.joblib"
+)
+```
+
+The classification artifact can be loaded with:
+
+```python
+classification_model = joblib.load(
+    "artifacts/classification_pipeline.joblib"
+)
+```
+
+Classification metadata can be loaded with:
+
+```python
+metadata = joblib.load(
+    "artifacts/classification_metadata.joblib"
+)
+```
+
+Because preprocessing is stored inside each fitted pipeline, raw predictor data can be passed directly to the model as long as the required columns and valid category values are provided.
+
+---
+
+# Reproducibility
+
+The project supports reproducibility through:
+
+- Fixed train-validation random state
+- Training-only preprocessing
+- Training-only calculation of the high-risk target threshold
+- Saved preprocessing/model pipelines
+- Saved classification metadata
+- Dependency tracking through `requirements.txt`
+- Executable Jupyter notebooks
+- Reload testing for saved model artifacts
+- Streamlit scoring using saved artifacts rather than model retraining
+
+A peer should be able to clone the repository, create the environment, install dependencies, execute the notebooks, reload the saved artifacts, and run the Streamlit application without changing the modeling workflow.
+
+---
+
+# Key Results
+
+## Multiple Linear Regression
+
+```text
+Validation RMSE = 0.0735
+Validation MAE  = 0.0583
+Validation R²   = 0.8042
+```
+
+## Logistic Regression
+
+```text
+Validation Accuracy  = 0.8961
+Validation Precision = 0.8202
+Validation Recall    = 0.7483
+Validation F1        = 0.7826
+```
+
+The results indicate that the available predictors contain useful information for estimating accident risk and identifying higher-risk observations within this synthetic dataset.
+
+---
+
+# Future Work
+
+Future development could include:
+
+- Real local transportation and crash data
+- Geographic coordinates and road-segment identifiers
+- GIS mapping
+- Alternative classification thresholds
+- Improved high-risk recall
+- Additional validated roadway characteristics
+- Model monitoring
+- Professional review outcomes
+- Feedback loops for model validation and retraining
+
+A production implementation would require additional validation using real transportation data and review by transportation-safety professionals.
+
+---
+
+# Intended Use
+
+This project is a **proof-of-concept screening and prioritization tool**.
+
+It is intended to demonstrate how predictive analytics could help transportation professionals identify observations for additional investigation.
+
+It is not intended to:
+
+- Make automated engineering decisions
+- Recommend specific roadway interventions
+- Replace traffic engineers or transportation-safety professionals
+- Serve as a validated production safety system
+
+---
+
+# Technologies Used
+
+- Python
+- pandas
+- NumPy
+- Matplotlib
+- scikit-learn
+- joblib
+- Jupyter Notebook
+- Streamlit
+- Git
+- GitHub
+
+---
+
+# Course
+
+**MSBA 265 – Special Analytics Topics**
+
+University of the Pacific
+
+---
+
+# Project Author
+
+**Anh Ngo**
+
+---
+
+# AI Use Disclosure
+
+AI tools were used to support project organization, conceptual clarification, troubleshooting, documentation, and visual-design planning.
+
+All reported analytical results are based on the project dataset and code executed by the student.
+
+AI-generated suggestions were reviewed and validated before being incorporated into the project. No analytical results or dataset observations were fabricated.
+
+Final modeling, interpretation, and project decisions remain the responsibility of the student.
