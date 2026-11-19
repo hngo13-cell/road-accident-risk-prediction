@@ -1,4 +1,4 @@
-# Virtual environment
+# Virtual environments
 venv/
 .venv/
 
@@ -7,17 +7,17 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Jupyter
+# Jupyter checkpoints
 .ipynb_checkpoints/
+
+# IDE / editor settings
+.vscode/
+.idea/
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# IDE / editor
-.vscode/
-.idea/
-
-# Temporary files
+# Temporary / log files
 *.tmp
 *.log

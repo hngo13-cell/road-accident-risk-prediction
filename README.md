@@ -26,9 +26,9 @@ road-accident-risk-prediction/
 │
 ├── data/
 │   ├── batch_test_sample.csv
-│   ├── sample_submission.csv
+│   ├── train.csv
 │   ├── test.csv
-│   └── train.csv
+│   └── sample_submission.csv
 │
 ├── docs/
 │   └── P1.pdf
@@ -45,9 +45,12 @@ road-accident-risk-prediction/
 ├── src/
 │   └── data_split.py
 │
+├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
+
+The dataset files required to reproduce the analysis are included in the `data/` directory. No additional dataset download is required.
 
 ---
 
@@ -107,8 +110,6 @@ After activation, the terminal should show the virtual environment name, for exa
 
 ## 3. Upgrade pip
 
-Before installing the project dependencies, upgrade `pip`:
-
 ```bash
 python -m pip install --upgrade pip
 ```
@@ -131,7 +132,33 @@ pip install -r requirements.txt
 
 ---
 
-## VS Code Environment Setup
+# Dataset
+
+The dataset files required to reproduce the full analysis are already included in the repository under:
+
+```text
+data/
+├── batch_test_sample.csv
+├── train.csv
+├── test.csv
+└── sample_submission.csv
+```
+
+The main files are:
+
+```text
+data/train.csv
+data/test.csv
+data/sample_submission.csv
+```
+
+No additional Kaggle download or API authentication is required.
+
+`batch_test_sample.csv` is included as a small example file for testing the Streamlit application's batch-prioritization workflow.
+
+---
+
+# VS Code Environment Setup
 
 If you open the notebooks in VS Code, make sure they use the project's virtual environment.
 
@@ -171,7 +198,7 @@ Run the notebooks in the following order:
 
 The notebooks should be executed in this order because later stages build on the analysis and modeling decisions made earlier in the workflow.
 
-> Before running the commands below, confirm that `(venv)` appears in the terminal.
+> Before running the commands below, confirm that `(venv)` appears in the terminal and that the dataset files are present in the `data/` directory.
 
 ---
 
@@ -185,16 +212,12 @@ python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.i
 
 This notebook explores and summarizes the road-accident dataset.
 
-It includes exploratory analysis of the road, environmental, temporal, and historical variables used in the project.
-
 Generated outputs are stored in:
 
 ```text
 reports/figures/
 reports/tables/
 ```
-
-Wait until the command finishes and the terminal prompt returns before continuing.
 
 ---
 
@@ -213,7 +236,7 @@ The project uses:
 - **Multiple Linear Regression** for continuous `accident_risk` estimation
 - **Logistic Regression** for high-risk classification
 
-The notebook also produces supporting figures and tables in:
+Supporting figures and tables are saved in:
 
 ```text
 reports/figures/
@@ -232,25 +255,19 @@ python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final
 
 This notebook implements the selected final workflow and saves the reusable model artifacts used by the Streamlit application.
 
-The final artifacts are stored in:
-
-```text
-artifacts/
-```
-
 The expected files are:
 
 ```text
-regression_pipeline.joblib
-classification_pipeline.joblib
-classification_metadata.joblib
+artifacts/regression_pipeline.joblib
+artifacts/classification_pipeline.joblib
+artifacts/classification_metadata.joblib
 ```
 
 ---
 
 ## Run All Notebooks
 
-Alternatively, after activating the `venv`, the three notebooks can be executed sequentially with:
+Alternatively, after activating the `venv`, run:
 
 ```bash
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
@@ -288,7 +305,9 @@ The Streamlit application loads these saved artifacts directly.
 
 # Running the Application
 
-After the dependencies are installed and the model artifacts are available in `artifacts/`, start the Streamlit application from the project root:
+Because the fitted model artifacts are included in the repository, the Streamlit application can be run without retraining the models.
+
+From the project root:
 
 ```bash
 streamlit run app/app.py
@@ -304,6 +323,8 @@ The application provides two modes:
 
 - **Single Observation** – enter one road-condition profile and generate risk predictions.
 - **Batch CSV Prioritization** – upload multiple observations and rank them by predicted high-risk probability.
+
+> The full dataset is included in the repository for reproducibility, while the Streamlit application itself loads the saved model artifacts directly.
 
 ---
 
@@ -326,7 +347,7 @@ The high-risk classification threshold is `0.40`. The `0.75` cutoff for the **HI
 
 ## Batch CSV Prioritization
 
-A sample upload file is available at:
+A sample upload file is included at:
 
 ```text
 data/batch_test_sample.csv
@@ -397,6 +418,22 @@ The regression estimate can provide additional risk context, while the classific
 
 # Troubleshooting
 
+### Dataset files not found
+
+Confirm that the repository contains:
+
+```text
+data/train.csv
+data/test.csv
+data/sample_submission.csv
+```
+
+If any of these files are missing, make sure the repository was cloned completely and that the files were not removed locally.
+
+Do not rename the files because the notebooks expect the original filenames and paths.
+
+---
+
 ### Notebook uses the wrong Python environment
 
 Make sure the virtual environment is activated:
@@ -423,7 +460,7 @@ Select Kernel
 
 ### `jupyter` is not recognized
 
-Make sure the virtual environment is activated and the dependencies are installed:
+Make sure the virtual environment is activated and dependencies are installed:
 
 ```bash
 pip install -r requirements.txt
@@ -501,6 +538,8 @@ If they are missing, rerun:
 ```bash
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
 ```
+
+The required dataset files are already included in the `data/` directory.
 
 ---
 
