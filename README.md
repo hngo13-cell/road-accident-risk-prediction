@@ -1,37 +1,39 @@
 # Road Accident Risk Prediction and Safety Prioritization
 
-A proof-of-concept analytics project that uses road, environmental, temporal, and historical conditions to estimate accident risk and prioritize observations for additional transportation-safety review.
+A proof-of-concept analytics project that uses roadway, environmental, temporal, and historical conditions to estimate accident risk and prioritize higher-risk observations for transportation-safety review.
 
-The project combines:
+The project includes:
 
 - **Multiple Linear Regression** for continuous accident-risk estimation
 - **Logistic Regression** for high-risk screening
-- A **Streamlit application** for single-observation analysis and batch CSV prioritization
+- A **Streamlit application** for single-observation screening and batch CSV prioritization
 
-> **Note:** This project was developed using a synthetic dataset. The application is intended for screening and decision-support purposes only and should not replace professional transportation-safety or engineering analysis.
+> **Note:** This project uses a synthetic Kaggle dataset and is intended for analytical demonstration and decision support only.
 
 ---
 
 ## Repository Structure
 
-```text
+```text id="tv7ze4"
 road-accident-risk-prediction/
 ├── app/
 │   └── app.py
 │
 ├── artifacts/
-│   ├── regression_pipeline.joblib
+│   ├── classification_metadata.joblib
 │   ├── classification_pipeline.joblib
-│   └── classification_metadata.joblib
+│   └── regression_pipeline.joblib
 │
 ├── data/
 │   ├── batch_test_sample.csv
-│   ├── train.csv
+│   ├── sample_submission.csv
 │   ├── test.csv
-│   └── sample_submission.csv
+│   └── train.csv
 │
 ├── docs/
-│   └── P1.pdf
+│   ├── P1.pdf
+│   ├── P2.pdf
+│   └── Road_Accident_Risk_Presentation.pptx
 │
 ├── notebooks/
 │   ├── 01_eda.ipynb
@@ -50,7 +52,9 @@ road-accident-risk-prediction/
 └── requirements.txt
 ```
 
-The dataset files required to reproduce the analysis are included in the `data/` directory. No additional dataset download is required.
+The repository includes the dataset, fitted model artifacts, analysis notebooks, generated outputs, and project documentation.
+
+No additional dataset download is required.
 
 ---
 
@@ -58,14 +62,10 @@ The dataset files required to reproduce the analysis are included in the `data/`
 
 ## 1. Clone the Repository
 
-Open PowerShell, Command Prompt, Terminal, or the VS Code terminal and run:
-
-```bash
+```bash id="s1ce11"
 git clone https://github.com/hngo13-cell/road-accident-risk-prediction.git
 cd road-accident-risk-prediction
 ```
-
-You should now be inside the project root directory.
 
 ---
 
@@ -73,60 +73,42 @@ You should now be inside the project root directory.
 
 ### Windows
 
-Create a virtual environment:
-
-```powershell
+```powershell id="0t2kja"
 python -m venv venv
 ```
 
-If PowerShell blocks script execution, run:
+If PowerShell blocks script execution:
 
-```powershell
+```powershell id="02ehtv"
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-Then activate the environment:
+Activate the environment:
 
-```powershell
+```powershell id="g1u01e"
 .\venv\Scripts\Activate.ps1
 ```
 
 ### macOS / Linux
 
-```bash
+```bash id="e3j0qh"
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-After activation, the terminal should show the virtual environment name, for example:
-
-```text
-(venv)
-```
-
-> **Important:** Make sure the `venv` environment is activated before installing dependencies or running any notebook.
-
 ---
 
-## 3. Upgrade pip
+## 3. Install Dependencies
 
-```bash
+Upgrade pip:
+
+```bash id="mtiq6q"
 python -m pip install --upgrade pip
 ```
 
-You can verify the installed version with:
+Install project dependencies:
 
-```bash
-python -m pip --version
-```
-
----
-
-## 4. Install Dependencies
-
-With the virtual environment activated, install the required packages:
-
-```bash
+```bash id="2subwo"
 pip install -r requirements.txt
 ```
 
@@ -134,228 +116,160 @@ pip install -r requirements.txt
 
 # Dataset
 
-The dataset files required to reproduce the full analysis are already included in the repository under:
+The required dataset files are included in:
 
-```text
+```text id="g2a5m2"
 data/
 ├── batch_test_sample.csv
-├── train.csv
+├── sample_submission.csv
 ├── test.csv
-└── sample_submission.csv
+└── train.csv
 ```
 
-The main files are:
+The main analysis uses:
 
-```text
+```text id="if1n2p"
 data/train.csv
 data/test.csv
-data/sample_submission.csv
 ```
 
-No additional Kaggle download or API authentication is required.
-
-`batch_test_sample.csv` is included as a small example file for testing the Streamlit application's batch-prioritization workflow.
+`batch_test_sample.csv` is provided for testing the Streamlit batch-prioritization workflow.
 
 ---
 
-# VS Code Environment Setup
+# VS Code Setup
 
-If you open the notebooks in VS Code, make sure they use the project's virtual environment.
+When using VS Code notebooks, select the project's virtual environment:
 
-In the top-right corner of the notebook, select:
-
-```text
+```text id="pp55zu"
 Select Kernel
 → Python Environments
 → venv
 ```
 
-The selected Python environment should point to the `venv` folder inside this project.
+Verify the active Python environment with:
 
-You can also verify the active Python environment from the terminal:
-
-```bash
+```bash id="4ngz5p"
 python -c "import sys; print(sys.executable)"
-```
-
-The returned path should include:
-
-```text
-road-accident-risk-prediction\venv\
 ```
 
 ---
 
-# Reproducing the Full Analysis
+# Reproducing the Analysis
 
-Run the notebooks in the following order:
+Run the notebooks in this order:
 
-```text
+```text id="rg4hfr"
 1. notebooks/01_eda.ipynb
 2. notebooks/02_model_development.ipynb
 3. notebooks/03_final_model.ipynb
 ```
 
-The notebooks should be executed in this order because later stages build on the analysis and modeling decisions made earlier in the workflow.
+From the project root:
 
-> Before running the commands below, confirm that `(venv)` appears in the terminal and that the dataset files are present in the `data/` directory.
-
----
-
-## 5. Run `01_eda.ipynb`
-
-From the project root, run:
-
-```bash
-python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
-```
-
-This notebook explores and summarizes the road-accident dataset.
-
-Generated outputs are stored in:
-
-```text
-reports/figures/
-reports/tables/
-```
-
----
-
-## 6. Run `02_model_development.ipynb`
-
-After the EDA notebook finishes successfully, run:
-
-```bash
-python -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_model_development.ipynb
-```
-
-This notebook develops and evaluates the regression and classification models and evaluates classification probability thresholds.
-
-The project uses:
-
-- **Multiple Linear Regression** for continuous `accident_risk` estimation
-- **Logistic Regression** for high-risk classification
-
-Supporting figures and tables are saved in:
-
-```text
-reports/figures/
-reports/tables/
-```
-
----
-
-## 7. Run `03_final_model.ipynb`
-
-After model development is complete, run:
-
-```bash
-python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
-```
-
-This notebook implements the selected final workflow and saves the reusable model artifacts used by the Streamlit application.
-
-The expected files are:
-
-```text
-artifacts/regression_pipeline.joblib
-artifacts/classification_pipeline.joblib
-artifacts/classification_metadata.joblib
-```
-
----
-
-## Run All Notebooks
-
-Alternatively, after activating the `venv`, run:
-
-```bash
+```bash id="bdv3zl"
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_model_development.ipynb
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
 ```
 
-Each command should complete successfully before the next notebook is executed.
+### Notebook Purpose
+
+**`01_eda.ipynb`**
+
+- Audits the dataset
+- Reviews predictor distributions and relationships
+- Checks data quality
+- Establishes the train-validation split
+
+**`02_model_development.ipynb`**
+
+- Builds regression and classification baselines
+- Fits Multiple Linear Regression
+- Fits Logistic Regression
+- Evaluates model performance
+- Evaluates classification thresholds
+
+**`03_final_model.ipynb`**
+
+- Implements the selected final workflow
+- Saves fitted model artifacts
+- Reloads and verifies the saved artifacts
+
+---
+
+# Generated Outputs
+
+Model outputs are stored in:
+
+```text id="tfv20l"
+reports/
+├── figures/
+└── tables/
+```
+
+The repository already includes these outputs for inspection.
+
+Running the notebooks again may regenerate or overwrite them.
 
 ---
 
 # Saved Model Artifacts
 
-```text
-regression_pipeline.joblib
+The final fitted artifacts are stored in:
+
+```text id="sxrfri"
+artifacts/
+├── regression_pipeline.joblib
+├── classification_pipeline.joblib
+└── classification_metadata.joblib
 ```
 
-Contains the preprocessing workflow and fitted Multiple Linear Regression model.
+`classification_metadata.joblib` stores:
 
-```text
-classification_pipeline.joblib
+```text id="tj1g0j"
+High-risk target cutoff: 0.46
+Classification probability threshold: 0.40
 ```
 
-Contains the preprocessing workflow and fitted Logistic Regression model.
-
-```text
-classification_metadata.joblib
-```
-
-Stores information required by the final classification workflow, including the training-derived high-risk definition and selected classification probability threshold.
-
-The Streamlit application loads these saved artifacts directly.
+The saved artifacts were reloaded and verified to reproduce the original model predictions.
 
 ---
 
-# Running the Application
+# Running the Streamlit Application
 
-Because the fitted model artifacts are included in the repository, the Streamlit application can be run without retraining the models.
+The saved artifacts are already included, so the application can run without retraining.
 
 From the project root:
 
-```bash
+```bash id="dpyx9a"
 streamlit run app/app.py
 ```
 
 Alternatively:
 
-```bash
+```bash id="pqts7v"
 python -m streamlit run app/app.py
 ```
 
-The application provides two modes:
+The application supports:
 
-- **Single Observation** – enter one road-condition profile and generate risk predictions.
-- **Batch CSV Prioritization** – upload multiple observations and rank them by predicted high-risk probability.
-
-> The full dataset is included in the repository for reproducibility, while the Streamlit application itself loads the saved model artifacts directly.
+- **Single Observation**
+- **Batch CSV Prioritization**
 
 ---
 
-# Using the Application
+# Batch CSV Input
 
-## Single Observation
+A sample batch file is included at:
 
-Enter the road, environmental, temporal, and historical characteristics of one observation and click **Analyze Risk**.
-
-The application returns:
-
-- **Estimated Accident Risk**
-- **High-Risk Probability**
-- **High-Risk Flag**
-- **Review Priority**
-
-The high-risk classification threshold is `0.40`. The `0.75` cutoff for the **HIGH** review-priority category is an illustrative business rule rather than a transportation-engineering threshold.
-
----
-
-## Batch CSV Prioritization
-
-A sample upload file is included at:
-
-```text
+```text id="77qeay"
 data/batch_test_sample.csv
 ```
 
-The uploaded CSV should contain:
+Required columns:
 
-```text
+```text id="dmbf4m"
 road_type
 num_lanes
 curvature
@@ -370,11 +284,9 @@ school_season
 num_reported_accidents
 ```
 
-After upload, the application validates the data, scores all observations, and ranks them from highest to lowest predicted high-risk probability.
+The batch output includes:
 
-The output includes:
-
-```text
+```text id="6zd8ar"
 priority_rank
 estimated_accident_risk
 high_risk_probability
@@ -382,152 +294,65 @@ high_risk_flag
 review_priority
 ```
 
-The complete prioritized results can be downloaded as:
+---
 
-```text
-road_safety_prioritized_results.csv
+# Review Priority
+
+The Streamlit application uses the following illustrative review-priority categories:
+
+```text id="rxem26"
+HIGH      probability >= 0.75
+MEDIUM    0.40 <= probability < 0.75
+LOW       probability < 0.40
 ```
+
+The `0.40` cutoff is the selected classification threshold.
+
+The `0.75` HIGH-priority cutoff is an illustrative business rule and is not a validated transportation-engineering threshold.
 
 ---
 
-# How to Interpret the Results
+# Project Documents
 
-The application is designed to support **screening and prioritization**, not automatic decision-making.
+Project deliverables are stored in:
 
-A recommended workflow is:
-
-```text
-Road-condition data
-        ↓
-Model scoring
-        ↓
-High-risk probability
-        ↓
-Priority ranking
-        ↓
-Professional transportation-safety review
-        ↓
-Engineering investigation or decision
+```text id="5nu2xq"
+docs/
 ```
 
-In batch analysis, observations with higher predicted high-risk probability should generally be reviewed first.
+Including:
 
-The regression estimate can provide additional risk context, while the classification probability serves as the primary prioritization signal.
+```text id="gxjs8j"
+P1.pdf
+P2.pdf
+Road_Accident_Risk_Presentation.pptx
+```
 
 ---
 
 # Troubleshooting
 
-### Dataset files not found
-
-Confirm that the repository contains:
-
-```text
-data/train.csv
-data/test.csv
-data/sample_submission.csv
-```
-
-If any of these files are missing, make sure the repository was cloned completely and that the files were not removed locally.
-
-Do not rename the files because the notebooks expect the original filenames and paths.
-
----
-
-### Notebook uses the wrong Python environment
-
-Make sure the virtual environment is activated:
-
-```powershell
-.\venv\Scripts\Activate.ps1
-```
-
-Then verify:
-
-```bash
-python -c "import sys; print(sys.executable)"
-```
-
-If running the notebook interactively in VS Code, select:
-
-```text
-Select Kernel
-→ Python Environments
-→ venv
-```
-
----
-
 ### `jupyter` is not recognized
 
-Make sure the virtual environment is activated and dependencies are installed:
+Make sure the virtual environment is activated and run:
 
-```bash
+```bash id="df55xk"
 pip install -r requirements.txt
 ```
-
-Then use:
-
-```bash
-python -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb
-```
-
----
 
 ### `streamlit` is not recognized
 
-Make sure the virtual environment is activated and dependencies are installed:
-
-```bash
-pip install -r requirements.txt
-```
-
-Then run:
-
-```bash
-python -m streamlit run app/app.py
-```
-
----
-
-### PowerShell blocks virtual environment activation
-
 Run:
 
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```bash id="a5m1vc"
+python -m streamlit run app/app.py
 ```
-
-Then:
-
-```powershell
-.\venv\Scripts\Activate.ps1
-```
-
----
-
-### Batch CSV cannot be scored
-
-Check that:
-
-- All required columns are present.
-- Required fields do not contain missing values.
-- Categorical values match the accepted values.
-- Boolean columns use `0`, `1`, `True`, or `False`.
-
-You can compare the input file with:
-
-```text
-data/batch_test_sample.csv
-```
-
----
 
 ### Model artifact error
 
 Confirm that these files exist:
 
-```text
+```text id="jxtd4e"
 artifacts/regression_pipeline.joblib
 artifacts/classification_pipeline.joblib
 artifacts/classification_metadata.joblib
@@ -535,32 +360,9 @@ artifacts/classification_metadata.joblib
 
 If they are missing, rerun:
 
-```bash
+```bash id="k3r9vv"
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_final_model.ipynb
 ```
-
-The required dataset files are already included in the `data/` directory.
-
----
-
-# Project Scope
-
-This project demonstrates a reproducible road-safety risk-screening workflow using synthetic data.
-
-It is appropriate for:
-
-- Risk screening
-- Prioritization
-- Analytical demonstration
-- Decision-support prototyping
-
-It should **not** be used to:
-
-- Automatically determine transportation-safety actions
-- Prescribe engineering countermeasures
-- Replace professional engineering or safety analysis
-
-Real-world deployment would require local roadway and crash data, additional validation, and professional review.
 
 ---
 
